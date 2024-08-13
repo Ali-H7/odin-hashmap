@@ -52,6 +52,33 @@ class hashMap {
     if (currentNode === null) return false;
   }
 
+  remove(key) {
+    let count = 0;
+    const index = this.hash(key);
+    let currentNode = this.bucket[index].head;
+    let lastNode = this.bucket[index].head;
+    if (this.bucket[index] === undefined) return false;
+
+    while (currentNode != null) {
+      if (currentNode.key === key) break;
+      lastNode = currentNode;
+      currentNode = currentNode.nextNode;
+      count++;
+    }
+
+    if (currentNode.key === key && count === 0) {
+      this.bucket[index].head = currentNode.nextNode;
+      this.entries--;
+      return true;
+    }
+    if (currentNode.key === key) {
+      lastNode.nextNode = currentNode.nextNode;
+      this.entries--;
+      return true;
+    }
+    if (currentNode === null) return false;
+  }
+
   insert(index, key, value) {
     const newNode = new node(key, value);
 
@@ -113,7 +140,8 @@ test.set('ice cream', 'white');
 test.set('jacket', 'blue');
 test.set('kite', 'pink');
 test.set('lion', 'golden');
-console.log(test.bucket);
 console.log(test.entries);
 console.log(test.get('ice cream'));
 console.log(test.has('jacket'));
+test.remove('hat');
+console.log(test.bucket);
