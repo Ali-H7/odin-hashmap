@@ -38,6 +38,20 @@ class hashMap {
     return currentNode.value;
   }
 
+  has(key) {
+    const index = this.hash(key);
+
+    if (this.bucket[index] === undefined) return false;
+    let currentNode = this.bucket[index].head;
+
+    while (currentNode != null) {
+      if (currentNode.key === key) return true;
+      currentNode = currentNode.nextNode;
+    }
+
+    if (currentNode === null) return false;
+  }
+
   insert(index, key, value) {
     const newNode = new node(key, value);
 
@@ -102,3 +116,4 @@ test.set('lion', 'golden');
 console.log(test.bucket);
 console.log(test.entries);
 console.log(test.get('ice cream'));
+console.log(test.has('jacket'));
