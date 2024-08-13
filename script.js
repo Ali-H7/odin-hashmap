@@ -23,6 +23,21 @@ class hashMap {
     this.insert(index, key, value);
   }
 
+  get(key) {
+    const index = this.hash(key);
+
+    if (this.bucket[index] === undefined) return null;
+    let currentNode = this.bucket[index].head;
+
+    while (currentNode != null) {
+      if (currentNode.key === key) break;
+      currentNode = currentNode.nextNode;
+    }
+
+    if (currentNode === null) return null;
+    return currentNode.value;
+  }
+
   insert(index, key, value) {
     const newNode = new node(key, value);
 
@@ -86,3 +101,4 @@ test.set('kite', 'pink');
 test.set('lion', 'golden');
 console.log(test.bucket);
 console.log(test.entries);
+console.log(test.get('ice cream'));
