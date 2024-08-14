@@ -1,9 +1,9 @@
-class hashMap {
+class HashMap {
   constructor() {
     this.bucket = new Array(16);
     this.capcity = 16;
     this.loadFactor = 0.75;
-    this.entries = 0;
+    this.size = 0;
   }
 
   hash(key) {
@@ -12,7 +12,7 @@ class hashMap {
     const primeNumber = 31;
     for (let i = 0; i < key.length; i++) {
       hashCode = primeNumber * hashCode + key.charCodeAt(i);
-      hashCode %= 16;
+      hashCode %= this.capcity;
     }
 
     return hashCode;
@@ -82,6 +82,38 @@ class hashMap {
     return valuesArray;
   }
 
+  entries() {
+    const entriesArray = new Array();
+
+    this.bucket.forEach((value) => {
+      let currentNode = value.head;
+
+      while (currentNode != null) {
+        const tempArray = new Array();
+        tempArray.push(currentNode.key);
+        tempArray.push(currentNode.value);
+        entriesArray.push(tempArray);
+        currentNode = currentNode.nextNode;
+      }
+    });
+
+    return entriesArray;
+  }
+
+  grow() {
+    const currentLoad = this.capcity * this.loadFactor;
+    if (this.size > currentLoad) {
+      const tempArray = this.entries();
+      this.capcity *= 2;
+      this.size = 0;
+
+      this.bucket = new Array(this.capcity);
+      tempArray.forEach((arr) => {
+        this.set(arr[0], arr[1]);
+      });
+    }
+  }
+
   remove(key) {
     let count = 0;
     const index = this.hash(key);
@@ -98,12 +130,12 @@ class hashMap {
 
     if (currentNode.key === key && count === 0) {
       this.bucket[index].head = currentNode.nextNode;
-      this.entries--;
+      this.size--;
       return true;
     }
     if (currentNode.key === key) {
       lastNode.nextNode = currentNode.nextNode;
-      this.entries--;
+      this.size--;
       return true;
     }
     if (currentNode === null) return false;
@@ -119,7 +151,8 @@ class hashMap {
 
     if (this.bucket[index].head === null) {
       this.bucket[index].head = newNode;
-      this.entries++;
+      this.size++;
+      this.grow();
       return;
     }
 
@@ -144,15 +177,18 @@ class hashMap {
     }
 
     currentNode.nextNode = newNode;
-    this.entries++;
+    this.size++;
+    this.grow();
   }
 
   length() {
-    return this.entries;
+    return this.size;
   }
 
   clear() {
     this.bucket = new Array(16);
+    this.capcity = 16;
+    this.size = 0;
   }
 }
 
@@ -164,7 +200,8 @@ class node {
   }
 }
 
-const test = new hashMap();
+const test = new HashMap();
+
 test.set('apple', 'red');
 test.set('banana', 'yellow');
 test.set('carrot', 'orange');
@@ -173,16 +210,12 @@ test.set('elephant', 'gray');
 test.set('frog', 'green');
 test.set('grape', 'purple');
 test.set('hat', 'black');
-test.set('hat', 'black');
 test.set('ice cream', 'white');
 test.set('jacket', 'blue');
 test.set('kite', 'pink');
 test.set('lion', 'golden');
-console.log(test.entries);
-console.log(test.get('ice cream'));
-console.log(test.has('jacket'));
-test.remove('hat');
+test.set('elephant', 'pink');
+test.set('hat', 'cyan');
+test.set('moon', 'silver');
+
 console.log(test.bucket);
-console.log(test.length());
-console.log(test.keys());
-console.log(test.values());
